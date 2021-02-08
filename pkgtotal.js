@@ -142,3 +142,95 @@ function getfunction(){
     }
     return h2id;
 }
+
+
+function getAngularCli(){
+    var desc = [];
+    var overview= document.getElementsByClassName('cli-body')[0];
+    if(!overview) return JSON.stringify(desc);
+    var childs=overview.childNodes;
+    var desc = [];
+    for(var i=0;i<childs.length;i++){
+        var child = childs[i];
+        if(child.nodeName =="#text") continue;
+        var text = child.nodeName == "TABLE" ? child.innerHTML : child.innerText;
+        desc.push([child.nodeName,text]);
+    }
+    return JSON.stringify(desc);
+}
+
+function getStackInfo(){
+    var docs = document.getElementsByClassName("line");
+    var links = [];
+    for(var i=0;i<docs.length;i++){
+        var doc = docs[i];
+        if(doc.innerText.indexOf("stackshare.io") > -1){
+            var text = doc.innerText.replaceAll("<loc>","");
+            text = text.replaceAll("</loc>","");
+            links.push(text);
+        }
+    }
+    return JSON.stringify(links);
+}
+
+function getCompanyStack(){
+    //debugger;
+    var company = {};
+    
+    var linksParent = document.getElementsByClassName("css-yc2npd")[0];
+    var company1 = linksParent.getElementsByTagName("a")[0].href;
+    var companyweb = linksParent.getElementsByTagName("a")[1].href;
+    var title = document.getElementsByTagName("h1")[0].innerText;
+    var view=document.getElementsByClassName("css-1oxs2wi")[0].innerText;
+     
+    company.Web = companyweb;
+    company.Title = title;
+    company.StackWeb = company1;
+    company.Views = view;
+
+   
+    var code = document.getElementById("stack");
+    var types = code.getElementsByClassName("css-180cglb");
+
+    var cats = [];
+
+    for(var i=0;i<types.length;i++){
+        var type = types[i];
+        var heading = type.getElementsByTagName("h3")[0].innerText;
+        var tools = type.getElementsByClassName("css-1k0l9wu");
+        var toolsNames = [];
+        for(var j=0;j<tools.length;j++){
+            var tool = tools[j];
+            toolsNames.push(tool.innerText);
+        }
+        cats.push(
+            {
+                Name:heading,
+                Tools:toolsNames
+            }
+        );
+    }
+
+    company.Technologies = cats;
+    return company;
+}
+
+function getWebsiteInfo(){
+    var serverdata=document.getElementById("serverdata");
+    var spans = serverdata.getElementsByClassName("tab");
+    var name = spans[0].innerText;
+    var url = spans[1].innerText;
+    var status="";
+    var isUp = serverdata.getElementsByClassName("upicon")[0];
+    if(isUp){
+       status="UP";
+    }else{
+        status="DOWN"; 
+    }
+    var data = {
+        Name : name,
+        Url : url,
+        Status : status
+    };
+    return JSON.stringify(data);
+}
